@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: Soflyy
+Contributors: Soflyy, donmhico
 Tags: amazon,affiliate,associate,woocommerce
 Requires at least: 3.7
 Tested up to: 3.7.1
