@@ -1,0 +1,166 @@
+SearchIndex: Automotive
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (the ranking is higher when keywords are found in titles and—if there are multiple keywords—how closely they occur in descriptions), and how often customers purchased the products they found using the keyword.
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+reviewrank	Highest to lowest ratings in customer reviews.
+reviewrank_authority	Review rank: high to low
+
+
+SearchIndex: Baby
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+
+
+SearchIndex: Blended
+You cannot use any sort parameters with the Blended search index.
+
+
+SearchIndex: Books
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+-pubdate	Publish date: oldest to recent
+
+
+SearchIndex: DVD
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+-releasedate	Release date: oldest to recent
+
+
+SearchIndex: Electronics
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+
+
+SearchIndex: ForeignBooks
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+-pubdate	Publish date: oldest to recent
+
+
+SearchIndex: HomeGarden
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+
+
+SearchIndex: KindleStore
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+-edition-sales-velocity	Quickest to slowest selling products.
+price	Price: low to high
+-price	Price: high to low
+reviewrank	Average customer review: high to low
+daterank	Publication date: newer to older
+salesrank	Bestselling
+
+
+SearchIndex: Kitchen
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+
+
+SearchIndex: Lighting
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+
+
+SearchIndex: MP3Downloads
+Value	Description
+price	Price: low to high
+-price	Price: high to low
+-releasedate	Release date: newer to older
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (the ranking is higher when keywords are found in titles and—if there are multiple keywords—how closely they occur in descriptions), and how often customers purchased the products they found using the keyword.
+salesrank	Bestselling
+
+
+SearchIndex: Music
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+reviewrank	Average customer review: high to low
+-releasedate	Release date: latest to earliest
+
+
+SearchIndex: Shoes
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+-releasedate	Newest arrivals
+
+
+SearchIndex: Software
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+-releasedate	Newest arrivals
+
+
+SearchIndex: Toys
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+
+
+SearchIndex: VideoGames
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+-releasedate	Latest arrivals
+
+
+SearchIndex: Watches
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
