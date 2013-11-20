@@ -1,6 +1,6 @@
 <?php
 /*
-  Plugin Name: Prosociate Amazon
+  Plugin Name: Prosociate
   Description: The best WordPress plugin for Amazon Associates.
   Version: 0.9.0
   Author: Soflyy
