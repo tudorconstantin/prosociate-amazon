@@ -544,7 +544,7 @@ class Prossociate {
      */
     public function admin_menu() {
         // Admin Parent Menu
-        add_menu_page('Prosociate', 'Prosociate', 'manage_options', __FILE__, array($this, 'home'), PROSSOCIATE_ROOT_URL . "/images/favicon.ico");
+        add_menu_page('Prosociate', 'Prosociate', 'manage_options', __FILE__, array($this, 'home'), PROSSOCIATE_ROOT_URL . "/images/favicon.png");
 
         // Subpages
         add_submenu_page(__FILE__, 'Add Products', 'Home', 'manage_options', __FILE__, array($this, 'home'));
