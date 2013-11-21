@@ -1,5 +1,5 @@
 === Prosociate - Amazon Affiliate Plugin ===
-Contributors: Soflyy
+Contributors: soflyy
 Tags: amazon,affiliate,associate,woocommerce
 Requires at least: 3.7
 Tested up to: 3.7.1
