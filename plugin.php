@@ -180,7 +180,7 @@ class Prossociate {
                 <form method="post">
                     <label for="freepos-tellus-text">How did you hear about Prosociate?</label>
                     <input style="margin: 0 10px;" type="text" name="freepos-text" id="freepos-tellus-text"/>
-                    <input type="submit"/>
+                    <input type="submit" value="Tell Us"/>
                 </form>
             </div>
     <?php }
