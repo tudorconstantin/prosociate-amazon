@@ -1,9 +1,10 @@
 <?php
 /*
-  Plugin Name: Prosociate Amazon
-  Description: The best WordPress plugin for Amazon Associates.
-  Version: 0.9.0
+  Plugin Name: Prosociate Free Edition
+  Description: The best free WordPress plugin for Amazon Associates.
+  Version: 0.9.3
   Author: Soflyy
+  Plugin URI: http://www.prosociate.com/
  */
 
 // Prevent direct access
@@ -142,6 +143,7 @@ class Prossociate {
         // force user to add amazon access key first
         add_action('admin_init', array($this, 'settings_redirect'));
         add_action('admin_notices', array($this, 'amazon_keys_required'));
+        add_action('admin_notices', array($this, 'adminNotificationAds'));
 		
 		add_action('init', array($this, 'woocommerceTabs'));
 		add_action('init', array($this, 'woocommercePrice'));
@@ -155,6 +157,59 @@ class Prossociate {
         // Custom metabox
         add_action('add_meta_boxes', array($this, 'prosociate_wc_meta_box'));
         add_action('save_post', array($this, 'prosociate_wc_meta_box_save'));
+
+        // Capture the tell us
+        add_action('admin_init', array($this, 'adminSendTellUsAds'));
+    }
+
+    /**
+     * Display "Tell Us" form for tracking ads
+     */
+    public function adminNotificationAds() {
+        // Check if this is the first time sending the info
+        if(isset($_POST['freepos-text'])) { ?>
+            <div class="updated">
+                <p>Thank you for your cooperation.</p>
+            </div>
+        <?php } else {
+            // Get option if we need to display this
+            if(get_option('freepros-ads', false) === 'finished')
+                return;
+            ?>
+            <div class="updated" style="padding-top: 10px; padding-bottom: 10px;">
+                <form method="post">
+                    <label for="freepos-tellus-text">How did you hear about Prosociate?</label>
+                    <input style="margin: 0 10px;" type="text" name="freepos-text" id="freepos-tellus-text"/>
+                    <input type="submit"/>
+                </form>
+            </div>
+    <?php }
+    }
+
+    /**
+     * Send the info to prosociate.com
+     */
+    public function adminSendTellUsAds() {
+        if(isset($_POST['freepos-text'])) {
+            // Only send if the field is not empty
+            if(!empty($_POST['freepos-text'])) {
+                $url = 'http://www.prosociate.com/';
+                wp_remote_post($url, array(
+                    'method' => 'POST',
+                    'timeout' => 45,
+                    'redirection' => 5,
+                    'httpversion' => '1.0',
+                    'blocking' => true,
+                    'headers' => array(),
+                    'body' => array('message' => $_POST['freepos-text']),
+                    'cookies' => array()
+                ));
+            }
+
+            // Update option to hide this
+            update_option('freepros-ads', 'finished');
+        }
+
     }
 
     /**
@@ -543,7 +598,7 @@ class Prossociate {
      */
     public function admin_menu() {
         // Admin Parent Menu
-        add_menu_page('Prosociate', 'Prosociate', 'manage_options', __FILE__, array($this, 'home'), PROSSOCIATE_ROOT_URL . "/images/favicon.ico");
+        add_menu_page('Prosociate', 'Prosociate', 'manage_options', __FILE__, array($this, 'home'), PROSSOCIATE_ROOT_URL . "/images/favicon.png");
 
         // Subpages
         add_submenu_page(__FILE__, 'Add Products', 'Home', 'manage_options', __FILE__, array($this, 'home'));

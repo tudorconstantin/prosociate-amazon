@@ -13,7 +13,9 @@ class ProssociateCheckoutHooker {
         global $post;
         global $woocommerce;
 
-
+        // Fix issue when we don't have a $post object
+        if($post === null)
+            return false;
 
         if ($post->ID == woocommerce_get_page_id('checkout')) {
             

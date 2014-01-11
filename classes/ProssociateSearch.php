@@ -246,8 +246,12 @@ class ProssociateSearch {
     }
 
     public function get_browsenode_array() {
-
-        $handle = fopen(PROSSOCIATE_ROOT_DIR . '/data/browsenodes.csv', 'r');
+        // Make the process different
+        if(AWS_COUNTRY === 'com') {
+            $handle = fopen(PROSSOCIATE_ROOT_DIR . '/data/browsenodes-com.csv', 'r');
+        } else {
+            $handle = fopen(PROSSOCIATE_ROOT_DIR . '/data/browsenodes.csv', 'r');
+        }
 
         if (!$handle) {
             throw new Exception('BrowseNode data unreadable or inaccessible.');
@@ -255,17 +259,29 @@ class ProssociateSearch {
 
         $firstrow = fgetcsv($handle);
 
-        $key = 0;
-        while (($data = fgetcsv($handle)) !== false) {
-            $count = count($data);
-
-            for ($i = 0; $i < $count; $i++) {
-                // yuri - convert county initial to the AES code
-                $nn = ProssociateSearch::get_country_code_from_initial($firstrow[$i]);
-                $browsenodes[$data[0]][$nn] = $data[$i];
+        // Make the process different
+        if(AWS_COUNTRY === 'com') {
+            $browsenodes = array();
+            while (($data = fgetcsv($handle)) !== false) {
+                $browsenodes[] = array(
+                    'name' => $data[0],
+                    'nodeId' => $data[1],
+                    'searchIndex' => $data[2]
+                );
             }
+        } else {
+            $key = 0;
+            while (($data = fgetcsv($handle)) !== false) {
+                $count = count($data);
 
-            $key++;
+                for ($i = 0; $i < $count; $i++) {
+                    // yuri - convert county initial to the AES code
+                    $nn = ProssociateSearch::get_country_code_from_initial($firstrow[$i]);
+                    $browsenodes[$data[0]][$nn] = $data[$i];
+                }
+
+                $key++;
+            }
         }
 
         fclose($handle);
@@ -316,58 +332,6 @@ class ProssociateSearch {
     }
 
     /**
-     * Get browsnode data on prosociate.com
-     * @param $response
-     * @param $nodeId
-     * @param $rootNodes
-     * @param $root
-     */
-    private function browseNodeByMainSite($response, $nodeId, $rootNodes, $root) {
-        $body = wp_remote_retrieve_body($response);
-        $unserializedNodes = unserialize($body);
-
-        if($nodeId == '-2000') {
-            echo '<ul>';
-        }
-
-        if($unserializedNodes === false) {
-            $this->browseNodeByAmazon($nodeId, $rootNodes, $root);
-            die();
-        }
-
-        if($nodeId == "-2000" && empty($unserializedNodes)) {
-            $this->browseNodeByAmazon($nodeId, $rootNodes, $root);
-            die();
-        } else {
-            foreach($unserializedNodes as $nodes) {
-                if($nodes[2] == 'KindleStore' || $nodes[2] == 'MP3Downloads')
-                    continue;
-
-                if (empty($rootNodes)) {
-                    $node_ids = array();
-                    $rootNode = $root;
-                } else {
-                    $node_ids = split(',', $rootNodes);
-                    $rootNode = $nodes['2'];
-                }
-                $node_ids[] = $nodeId;
-                $node_path = implode(',', $node_ids);
-
-                if($nodeId === '-2000')
-                    $node_path = '';
-
-                echo '<li class="jstree-closed" id="' . $nodes['1'] . '" nodes="' . $node_path . '" root="' . $rootNode . '">
-                                <a href="javascript:prossociate_select_browsenodes(\'' . $nodes['1'] . '\', \'' . addslashes($nodes['0']) . '\', \'' . $nodes['2'] . '\');">' . $nodes['0'] . '</a>
-                            </li>';
-            }
-        }
-
-        if($nodeId == '-2000') {
-            echo '</ul>';
-        }
-    }
-
-    /**
      * Get browsnode data on amazon
      * @param $nodeid
      * @param $nodes
@@ -384,14 +348,24 @@ class ProssociateSearch {
             <ul>
             <?php
                 $browsenodes = ProssociateSearch::get_browsenode_array();
-                foreach ($browsenodes as $nodename => $nodevalues) {
-                    // yuri - load selected country's data
-                    if ($nodevalues[AWS_COUNTRY]) {
-                        // yuri - set browse node value into serach index box
+                if(AWS_COUNTRY === 'com') {
+                    // For united states
+                    foreach($browsenodes as $node) {
                         echo '
-						<li class="jstree-closed" id="' . $nodevalues[AWS_COUNTRY] . '" nodes="" root="' . $nodename . '">
-                            <a href="javascript:prossociate_select_browsenodes(\'' . $nodevalues[AWS_COUNTRY] . '\', \'' . $nodename . '\', \'' . $nodename . '\');">' . $nodename . '</a>
-						</li>';
+                                <li class="jstree-closed" id="' . $node['nodeId'] . '" nodes="" root="' . $node['searchIndex'] . '">
+                                    <a href="javascript:prossociate_select_browsenodes(\'' . $node['nodeId'] . '\', \'' . $node['name'] . '\', \'' . $node['searchIndex'] . '\');">' . $node['name'] . '</a>
+                                </li>';
+                    }
+                } else {
+                    foreach ($browsenodes as $nodename => $nodevalues) {
+                        // yuri - load selected country's data
+                        if ($nodevalues[AWS_COUNTRY]) {
+                            // yuri - set browse node value into serach index box
+                            echo '
+                                <li class="jstree-closed" id="' . $nodevalues[AWS_COUNTRY] . '" nodes="" root="' . $nodename . '">
+                                    <a href="javascript:prossociate_select_browsenodes(\'' . $nodevalues[AWS_COUNTRY] . '\', \'' . $nodename . '\', \'' . $nodename . '\');">' . $nodename . '</a>
+                                </li>';
+                        }
                     }
                 }
             ?>
@@ -478,10 +452,7 @@ class ProssociateSearch {
             }
         }
 
-        if($useMainSite)
-            $this->browseNodeByMainSite($response, $nodeId, $rootNodes, $root);
-        else
-            $this->browseNodeByAmazon($nodeId, $rootNodes, $root);
+        $this->browseNodeByAmazon($nodeId, $rootNodes, $root);
 
         die();
     }
