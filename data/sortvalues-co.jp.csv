@@ -1,0 +1,355 @@
+SearchIndex: Apparel
+Value	Description
+price	Price: low to high
+-price	Price: high to low
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (the ranking is higher when keywords are found in titles and—if there are multiple keywords—how closely they occur in descriptions), and how often customers purchased the products they found using the keyword.
+salesrank	Bestselling to worst selling
+
+
+SearchIndex: Appliances
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+reviewrank	Average customer review: high to low
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+
+
+SearchIndex: Automotive
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (the ranking is higher when keywords are found in titles and—if there are multiple keywords—how closely they occur in descriptions), and how often customers purchased the products they found using the keyword.
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+reviewrank	Highest to lowest ratings in customer reviews.
+
+
+SearchIndex: Baby
+Value	Description
+psrank	Bestseller ranking taking into consideration projected sales.The lower the value, the better the sales.
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+
+
+SearchIndex: Beauty
+Value	Description
+price	Price: low to high
+-price	Price: high to low
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (the ranking is higher when keywords are found in titles and—if there are multiple keywords—how closely they occur in descriptions), and how often customers purchased the products they found using the keyword.
+reviewrank	Highest to lowest ratings in customer reviews.
+
+
+SearchIndex: Blended
+You cannot use any sort parameters with the Blended search index.
+
+
+SearchIndex: Books
+Value	Description
+salesrank	Bestselling
+pricerank	Price: low to high
+inverse-pricerank	Price: high to low
+daterank	Publication date: newer to older
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+
+
+SearchIndex: Classical
+Value	Description
+salesrank	Bestselling
+pricerank	Price: low to high
+-pricerank	Price: high to low
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-orig-rel-date	Release date: newer to older
+orig-rel-date	Release date: older to newer
+releasedate	Release date: newer to older
+-releasedate	Release date: older to newer
+
+
+SearchIndex: DVD
+Value	Description
+salesrank	Bestselling
+pricerank	Price: low to high
+-pricerank	Price: high to low
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-orig-rel-date	Release date: newer to older
+orig-rel-date	Release date: older to newer
+releasedate	Release date: older to newer
+-releasedate	Release date: newer to older
+
+
+SearchIndex: Electronics
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-releasedate	Release date: newer to older
+releasedate	Release date: older to newer
+
+
+SearchIndex: ForeignBooks
+Value	Description
+salesrank	Bestselling
+pricerank	Price: low to high
+inverse-pricerank	Price: high to low
+daterank	Publication date: newer to older
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+
+
+SearchIndex: Grocery
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+reviewrank	Average customer review: high to low
+
+
+SearchIndex: HealthPersonalCare
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+
+
+SearchIndex: Hobbies
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+release-date	Release date: older to newer
+-release-date	Release date: newer to older
+mfg-age-min	Minimum age of user sorted from youngest to oldest.
+-mfg-age-min	Minimum age of user sorted from oldest to youngest.
+
+
+SearchIndex: HomeImprovement
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears, for example, the ranking is higher when keywords are found in titles, and, if there are multiple keywords, how closely they occur in descriptions, and, finally, how often customers purchased the products they found using the keyword.
+reviewrank	Highest to lowest ratings in customer reviews.
+
+
+SearchIndex: Jewelry
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (the ranking is higher when keywords are found in titles and—if there are multiple keywords—how closely they occur in descriptions), and how often customers purchased the products they found using the keyword.
+reviewrank	Highest to lowest ratings in customer reviews.
+
+
+SearchIndex: KindleStore
+Value	Description
+daterank	Publication date: new to old
+price	Price: low to high
+-price	Price: high to low
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (the ranking is higher when keywords are found in titles and—if there are multiple keywords—how closely they occur in descriptions), and how often customers purchased the products they found using the keyword.
+reviewrank	Highest to lowest ratings in customer reviews.
+reviewrank_authority	Review rank: high to low
+
+
+SearchIndex: Kitchen
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-release-date	Release date: newer to older
+release-date	Release date: older to newer
+releasedate	Items are sorted such that the most recently released item is listed first. Same as release-date.
+-releasedate	Items are sorted such that the last released item is listed first. Same as -release-date.
+
+
+SearchIndex: Marketplace
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-launch-date	Newest arrivals first
+
+
+SearchIndex: MobileApps
+Value	Description
+pmrank	Featured items
+price	Price: low to high
+-price	Price: high to low
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (the ranking is higher when keywords are found in titles and—if there are multiple keywords—how closely they occur in descriptions), and how often customers purchased the products they found using the keyword.
+reviewrank	Highest to lowest ratings in customer reviews.
+reviewrank_authority	Review rank: high to low
+
+
+SearchIndex: MP3Downloads
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears, for example, the ranking is higher when keywords are found in titles, and, if there are multiple keywords, how closely they occur in descriptions, and, finally, how often customers purchased the products they found using the keyword.
+salesrank	Bestselling
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+artistalbumrank	Artist album rank: high to low
+-artistalbumrank	Artist album rank: low to high
+albumrank	Album rank: high to low
+-albumrank	Album rank: low to high
+runtime	Track length: high to low
+-runtime	Track length: low to high
+price	Price: low to high
+-price	Price: high to low
+price-new-bin	Price: low to high
+-price-new-bin	Price: high to low
+reviewrank_authority	Review rank: high to low
+-releank	Review rank: low to high
+releasedate	Release date: older to newer
+
+
+SearchIndex: Music
+Value	Description
+salesrank	Bestselling
+pricerank	Price: low to high
+-pricerank	Price: high to low
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-orig-rel-date	Release date: newer to older
+orig-rel-date	Release date: older to newer
+releasedate	Release date: older to newer
+-releasedate	Release date: newer to older
+
+
+SearchIndex: MusicalInstruments
+Value	Description
+reviewrank	Highest to lowest ratings in customer reviews.
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears, for example, the ranking is higher when keywords are found in titles, and, if there are multiple keywords, how closely they occur in descriptions, and, finally, how often customers purchased the products they found using the keyword.
+
+
+SearchIndex: MusicTracks
+Value	Description
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+
+
+SearchIndex: OfficeProducts
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears, for example, the ranking is higher when keywords are found in titles, and, if there are multiple keywords, how closely they occur in descriptions, and, finally, how often customers purchased the products they found using the keyword.
+reviewrank	Highest to lowest ratings in customer reviews.
+
+
+SearchIndex: Shoes
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears, for example, the ranking is higher when keywords are found in titles, and, if there are multiple keywords, how closely they occur in descriptions, and, finally, how often customers purchased the products they found using the keyword.
+reviewrank	Highest to lowest ratings in customer reviews.
+
+
+SearchIndex: Software
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-release-date	Release date: newer to older
+release-date	Release date: older to newer
+releasedate	Items are sorted such that the most recently released item is listed first. Same as release-date.
+-releasedate	Items are sorted such that the last released item is listed first. Same as -release-date.
+
+
+SearchIndex: SportingGoods
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+releasedate	Release date: older to newer
+-releasedate	Release date: newer to older
+
+
+SearchIndex: Toys
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-release-date	Release date: newer to older
+release-date	Release date: older to newer
+releasedate	Items are sorted such that the most recently released item is listed first. Same as release-date.
+-releasedate	Items are sorted such that the last released item is listed first. Same as -release-date.
+
+
+SearchIndex: VHS
+Value	Description
+salesrank	Bestselling
+pricerank	Price: low to high
+-pricerank	Price: high to low
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-orig-rel-date	Release date: newer to older
+orig-rel-date	Release date: older to newer
+releasedate	Release date: older to newer
+-releasedate	Release date: newer to older
+
+
+SearchIndex: Video
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+pricerank	Price: low to high
+-pricerank	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-orig-rel-date	Release date: newer to older
+orig-rel-date	Release date: older to newer
+releasedate	Release date: older to newer
+-releasedate	Release date: newer to older
+
+
+SearchIndex: VideoGames
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
+-release-date	Release date: newer to older
+release-date	Release date: older to newer
+releasedate	Items are sorted such that the most recently released item is listed first. Same as release-date.
+-releasedate	Items are sorted such that the last released item is listed first. Same as -release-date.
+
+
+SearchIndex: Watches
+Value	Description
+salesrank	Bestselling
+price	Price: low to high
+-price	Price: high to low
+titlerank	Alphabetical: A to Z
+-titlerank	Alphabetical: Z to A
