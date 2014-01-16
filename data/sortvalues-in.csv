@@ -1,0 +1,17 @@
+SearchIndex: Books
+Value	Description
+relevancerank	Items ranked according to the following criteria: how often the keyword appears in the description, where the keyword appears (for example, the ranking is higher when keywords are found in titles), how closely they occur in descriptions (if there are multiple keywords), and how often customers purchased the products they found using the keyword.
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+-pubdate	Publish date: oldest to recent
+
+
+SearchIndex: DVD
+-pubdate	Publish date: oldest to recent
+salesrank	Best to worse selling
+price	Price: Low to high
+-price	Price: High to low
+reviewrank	Average customer review: high to low
+-releasedate	Release date: oldest to recent

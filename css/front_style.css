@@ -1,0 +1,108 @@
+.pros_gallery {
+    float: left;
+    margin-right: 16px;
+}
+
+.pros_important {
+    float: left;
+}
+
+.pros_buttons {
+    margin-top: 12px;
+}
+
+.pros_supersaver {
+    font-weight: bold;
+    color: #00aa00;
+}
+
+.pros_secondary {
+    clear: both;
+    padding-top: 4px;
+    margin-bottom: 4px;
+}
+
+.pros_nooffers {
+    clear: both;
+    padding-top: 4px;
+    margin-bottom: 4px;
+}
+
+.pros_altprices {
+    clear: both;
+    padding-top: 4px;
+    margin-bottom: 4px;
+}
+
+.pros_altprice {
+    display: block;
+    float: left;
+    width: 29%;
+}
+
+.pros_altprice span {
+    color: #A00;
+}
+
+.pros_altprice a {
+    font-weight: bold;
+}
+
+
+.pros_text {
+    clear: both;
+}
+
+/* pricing table */
+
+.pros_container .pros_price_table {
+    margin-left: 10px !important;
+}
+
+.pros_container .pros_price_table td.pros_price_table_label {
+    color: #666 !important;
+    text-align: right;
+    padding-right: 6px !important;
+}
+
+.pros_container .pros_price_table td.pros_price_table_value {
+    text-align: left;
+}
+
+.pros_list_price {
+    text-decoration: line-through;
+    color: #000;
+}
+
+.pros_price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #aa0000;
+}
+
+.pros_yousave {
+    color: #aa0000;
+}
+
+/* table reset */
+.pros_price_table, .pros_price_table td {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    font-size: 100% !important;
+    font: inherit !important;
+    vertical-align: baseline !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    width:auto !important;
+}
+
+.price {
+	margin-bottom: 0 !important;
+}
+
+.prosamazondis {
+    cursor: pointer;
+}
+
+/* end pricing table and table reset. wordpress theme developers:  */
