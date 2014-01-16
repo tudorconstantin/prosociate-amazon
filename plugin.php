@@ -2,7 +2,7 @@
 /*
   Plugin Name: Prosociate Free Edition
   Description: The best free WordPress plugin for Amazon Associates.
-  Version: 0.9.3
+  Version: 0.9.4
   Author: Soflyy
   Plugin URI: http://www.prosociate.com/
  */
@@ -76,7 +76,7 @@ class Prossociate {
 
     /**
      * The Campaign Controller. Only load if we are on a campaign-related admin page. And needs to be setup before upon initialization
-     * 
+     *
      * Source File: /classes/ProssociateCampaignController.php
      * @var object  ProssociateCampaignController
      */
@@ -84,23 +84,23 @@ class Prossociate {
 
     /**
      * Only load the display at the frontend. Also contains the shortcode [prossociate]
-     * 
+     *
      * Source File: /classes/ProssociateDisplay.php
-     * @var object ProssociateDisplay 
+     * @var object ProssociateDisplay
      */
     public $Display;
 
     /**
      * The poster. It does ajax iterative requests to bypass the php max execution time
-     * 
+     *
      * Source File: /classes/ProssociateDisplay.php
-     * @var object ProssociateDisplay 
+     * @var object ProssociateDisplay
      */
     public $Poster;
 
     /**
      * Responsible for making the purchase to AmazonECS
-     * 
+     *
      * Source File: /classes/ProssociateCheckoutHooker.php
      * @var object ProssociateCheckoutHooker
      */
@@ -108,7 +108,7 @@ class Prossociate {
 
     /**
      * Check if cron is still running to prevent duplicates.
-     * 
+     *
      * Source File: /classes/ProssociateCron.php
      * TODO: Will check what this file actually does.
      * @var object ProssociateCron
@@ -144,9 +144,9 @@ class Prossociate {
         add_action('admin_init', array($this, 'settings_redirect'));
         add_action('admin_notices', array($this, 'amazon_keys_required'));
         add_action('admin_notices', array($this, 'adminNotificationAds'));
-		
-		add_action('init', array($this, 'woocommerceTabs'));
-		add_action('init', array($this, 'woocommercePrice'));
+
+        add_action('init', array($this, 'woocommerceTabs'));
+        add_action('init', array($this, 'woocommercePrice'));
 
         // Style for amazon disclaimer
         add_action('wp_head', array($this, 'addAmazonDisclaimerStyle'));
@@ -167,47 +167,38 @@ class Prossociate {
      */
     public function adminNotificationAds() {
         // Check if this is the first time sending the info
-        if(isset($_POST['freepos-text'])) { ?>
+        if(isset($_GET['freepos-text'])) { ?>
             <div class="updated">
                 <p>Thank you for your cooperation.</p>
             </div>
         <?php } else {
             // Get option if we need to display this
-            if(get_option('freepros-ads', false) === 'finished')
+            if(get_option('freepros-ads1', false) === 'finished')
                 return;
             ?>
             <div class="updated" style="padding-top: 10px; padding-bottom: 10px;">
-                <form method="post">
+                <form method="get">
                     <label for="freepos-tellus-text">How did you hear about Prosociate?</label>
                     <input style="margin: 0 10px;" type="text" name="freepos-text" id="freepos-tellus-text"/>
                     <input type="submit" value="Tell Us"/>
                 </form>
             </div>
-    <?php }
+        <?php }
     }
 
     /**
      * Send the info to prosociate.com
      */
     public function adminSendTellUsAds() {
-        if(isset($_POST['freepos-text'])) {
+        if(isset($_GET['freepos-text'])) {
             // Only send if the field is not empty
-            if(!empty($_POST['freepos-text'])) {
-                $url = 'http://www.prosociate.com/';
-                wp_remote_post($url, array(
-                    'method' => 'POST',
-                    'timeout' => 45,
-                    'redirection' => 5,
-                    'httpversion' => '1.0',
-                    'blocking' => true,
-                    'headers' => array(),
-                    'body' => array('message' => $_POST['freepos-text']),
-                    'cookies' => array()
-                ));
+            if(!empty($_GET['freepos-text'])) {
+                $url = 'http://www.prosociate.com/?freepos-text=' . sanitize_title_with_dashes($_GET['freepos-text']);
+                wp_remote_get($url);
             }
 
             // Update option to hide this
-            update_option('freepros-ads', 'finished');
+            update_option('freepros-ads1', 'finished');
         }
 
     }
@@ -300,14 +291,14 @@ class Prossociate {
         // Update the meta field in the database.
         update_post_meta( $post_id, '_pros_alt_prod_desc', $mydata );
     }
-	
-	public function woocommercePrice() {
-		add_filter('woocommerce_get_price_html', array($this, 'filterPrice'));
-	}
-	
-	public function filterPrice($price) {
-		if(is_admin())
-			return $price;
+
+    public function woocommercePrice() {
+        add_filter('woocommerce_get_price_html', array($this, 'filterPrice'));
+    }
+
+    public function filterPrice($price) {
+        if(is_admin())
+            return $price;
         // Get post object
         global $post;
 
@@ -332,7 +323,7 @@ class Prossociate {
 
         // If we need to display the disclaimer regarding of the refreshed time
         return $price;
-	}
+    }
 
     /**
      * Do filtration of price if product is not refreshed within 24 hours.
@@ -392,15 +383,15 @@ class Prossociate {
 
         return $price;
     }
-	
-	public function woocommerceTabs() {
-		add_filter('woocommerce_product_tabs', array($this, 'reviewTabs'));
-	}
-	
-	public function reviewTabs($tabs) {
-		$tabs['reviews']['title'] = "Reviews";
-		return $tabs;
-	}
+
+    public function woocommerceTabs() {
+        add_filter('woocommerce_product_tabs', array($this, 'reviewTabs'));
+    }
+
+    public function reviewTabs($tabs) {
+        $tabs['reviews']['title'] = "Reviews";
+        return $tabs;
+    }
 
     /**
      * Check if the instance is already created. If not, create an instance
@@ -411,7 +402,7 @@ class Prossociate {
         }
         return self::$instance;
     }
-    
+
     public function initCron() {
         new ProssociateCron();
     }
@@ -422,13 +413,13 @@ class Prossociate {
         } else {
             $page ='';
         }
-        
+
         if(isset($_GET['settings-updated'])) {
             $settingsUpdated = $_GET['settings-updated'];
         } else {
             $settingsUpdated = '';
         }
-        
+
         if ($page == 'prossociate_settings' && $settingsUpdated == 'true') {
             $error = $this->check_amazon();
             if ($error) {
@@ -476,7 +467,7 @@ class Prossociate {
         } catch (Exception $e) {
             // Check 
             //if (isset($e->faultcode)) {
-                $error = true;
+            $error = true;
             //}
         }
 
@@ -517,7 +508,7 @@ class Prossociate {
                 $url = add_query_arg(array(
                     'page' => 'prossociate_settings',
                     'message' => 1
-                        ), $admin_url);
+                ), $admin_url);
 
                 wp_redirect($url);
                 exit();
@@ -531,19 +522,19 @@ class Prossociate {
         } else {
             $page = '';
         }
-        
+
         if(isset($_GET['message'])) {
             $message = $_GET['message'];
         } else {
             $message = '';
         }
-        
+
         if(isset($_GET['settings-updated'])) {
             $settingsUpdated = $_GET['settings-updated'];
         } else {
             $settingsUpdated = '';
         }
-        
+
         if ($page == 'prossociate_settings' && $message == 1 && $settingsUpdated != 'true') {
             ?>
             <div class="error">
@@ -564,7 +555,7 @@ class Prossociate {
             add_option('prossociate_settings-iframe-width', 600);
             add_option('prossociate_settings-iframe-height', 600);
             add_option('prossociate_settings-iframe-position', 'comment_form');
-			add_option('prossociate_settings-title-word-length', 9999);
+            add_option('prossociate_settings-title-word-length', 9999);
             ?>
             <div class="updated">
                 <p>Thanks for installing Prosociate.</p>
@@ -609,23 +600,23 @@ class Prossociate {
         $settings = new SoflyyOptionsPage('Settings', 'prossociate_settings', __FILE__, 'Prosociate: Settings');
         $settings->add_field('Associate ID', 'associate-id', 'text', 'Register for an Associate ID <a target="_blank" href="https://affiliate-program.amazon.com/">here</a>.');
         $settings->add_field('Associate Program Country', 'associate-program-country', 'select', 'Choose a country.', array(
-            'com' => 'United States',
-            'co.uk' => 'United Kingdom',
-            'co.jp' => 'Japan',
-            'de' => 'Germany',
-            'fr' => 'France',
-            'ca' => 'Canada',
-            'es' => 'Spain',
-            'it' => 'Italy',
-            'cn' => 'China',
-            'in' => 'India'
-                )
+                'com' => 'United States',
+                'co.uk' => 'United Kingdom',
+                'co.jp' => 'Japan',
+                'de' => 'Germany',
+                'fr' => 'France',
+                'ca' => 'Canada',
+                'es' => 'Spain',
+                'it' => 'Italy',
+                'cn' => 'China',
+                'in' => 'India'
+            )
         );
         $settings->add_field('AWS Access Key ID', 'aws-public-key');
         $settings->add_field('AWS Secret Access Key', 'aws-secret-key', 'text', 'Get your AWS Access Key ID and AWS Secret Access Key <a target="_blank" href="https://affiliate-program.amazon.com/gp/advertising/api/detail/main.html">here</a>.');
         $settings->add_field('Customer Reviews IFrame Width', 'iframe-width');
         $settings->add_field('Customer Reviews IFrame Height', 'iframe-height');
-		$settings->add_field('Max Length for Product Titles', 'title-word-length', 'text', 'Limit the number of characters in product titles. Does not apply retroactively.');
+        $settings->add_field('Max Length for Product Titles', 'title-word-length', 'text', 'Limit the number of characters in product titles. Does not apply retroactively.');
 //        $settings->add_field('Customer Reviews Position', 'iframe-position', 'select', 'Customer Reviews IFrame Position', array('comment_form' => 'Standard', 'comment_form_before' => 'Before The Comment Form', 'comment_form_after' => 'After The Comment Form'));
         //TODO should delete this?
         /*
@@ -686,7 +677,7 @@ class Prossociate {
 
             <p style="padding-left: 10px"><label for='prossociate_settings-pros-date-format'>Translate (as of 10/20/2015 at 09:23 UTC) <a id="dm-pros-default-link" href="#">reset to default</a></label><br />
                 <input type="text" id="prossociate_settings-pros-date-format" name="prossociate_settings-pros-date-format"
-                    style="width: 300px;" value="<?php echo $dateDisplay; ?>"/>
+                       style="width: 300px;" value="<?php echo $dateDisplay; ?>"/>
                 <script type="text/javascript">
                     function dmRestoreDefault() {
                         document.getElementById('prossociate_settings-pros-date-format').value = '(as of %%DATE%% at %%TIME%%)';
@@ -712,9 +703,9 @@ class Prossociate {
                     <td>
                         <select name="prossociate_settings-pros-dis-display-individual" >
                             <?php
-                                $selected = '';
-                                if($displayByLocation == 'false')
-                                    $selected = ' selected=selected';
+                            $selected = '';
+                            if($displayByLocation == 'false')
+                                $selected = ' selected=selected';
                             ?>
                             <option value='true'>Only show on individual product pages.</option>
                             <option value='false'<?php echo $selected; ?>>Show everywhere prices are displayed.</option>
@@ -768,21 +759,21 @@ class Prossociate {
         if (!get_option('pros_active_cron')) {
             update_option('pros_active_cron', "not_active_cron");
         }
-        
+
         // Check if variation checker is set
         if(!get_option('pros_active_cron_variation')) {
             update_option('pros_active_cron_variation', 'no_variation');
         }
-        
+
         // Check if variation step checker is set
         if(!get_option('pros_active_cron_variation_step')) {
             update_option('pros_active_cron_variation_step', 'no_variation');
         }
-        
+
         if( get_option('pros_active_cron_variation_offset') === FALSE ) {
             update_option('pros_active_cron_variation_offset', 0);
         }
-        
+
         // Check if cron time checker
         if(!get_option('pros_last_cron_time')) {
             update_option('pros_last_cron_time', time());
@@ -822,19 +813,19 @@ class Prossociate {
         $campaign_id = $_REQUEST['campaign_id'];
         if( $campaign_id != null ) {
             global $wpdb;
-            
+
             $dmSql = "Select options FROM wp_pros_campaigns WHERE id = '{$campaign_id}'";
-            
+
             $dmResult = $wpdb->get_col( $dmSql );
-            
+
             $dmUnserialized = unserialize($dmResult[0]);
-            
+
             $dmSelectedCats = $dmUnserialized['dmcategories'];
-            
+
             $removeZeroTermId = array_shift($dmSelectedCats);
-            
+
         }
-        
+
         $defaults = array('taxonomy' => 'product_cat');
         if (!isset($box['args']) || !is_array($box['args']))
             $args = array();
@@ -851,15 +842,15 @@ class Prossociate {
 
             <div id="<?php echo $taxonomy; ?>-pop" class="tabs-panel" style="display: none;">
                 <ul id="<?php echo $taxonomy; ?>checklist-pop" class="categorychecklist form-no-clear" >
-        <?php $popular_ids = wp_popular_terms_checklist($taxonomy); ?>
+                    <?php $popular_ids = wp_popular_terms_checklist($taxonomy); ?>
                 </ul>
             </div>
 
             <div id="<?php echo $taxonomy; ?>-all" class="tabs-panel">
-        <?php
-        $name = ( $taxonomy == 'category' ) ? 'post_category' : 'tax_input[' . $taxonomy . ']';
-        echo "<input type='hidden' name='{$name}[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
-        ?>
+                <?php
+                $name = ( $taxonomy == 'category' ) ? 'post_category' : 'tax_input[' . $taxonomy . ']';
+                echo "<input type='hidden' name='{$name}[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
+                ?>
                 <ul id="<?php echo $taxonomy; ?>checklist" data-wp-lists="list:<?php echo $taxonomy ?>" class="categorychecklist form-no-clear">
                     <?php wp_terms_checklist($post->ID, array('taxonomy' => $taxonomy, 'popular_cats' => $popular_ids)) ?>
                 </ul>
@@ -867,38 +858,38 @@ class Prossociate {
                     <script type=''>
                         <?php if(count($dmSelectedCats) > 0) { 
                             foreach($dmSelectedCats as $dmSelectedCat) { ?>
-                            jQuery("#in-product_cat-<?php echo $dmSelectedCat; ?>").attr("checked", "checked");
-                            
-                            <?php } 
-                        } ?>
+                        jQuery("#in-product_cat-<?php echo $dmSelectedCat; ?>").attr("checked", "checked");
+
+                        <?php }
+                    } ?>
                     </script>
                 <?php } ?>
             </div>
-        <?php if (current_user_can($tax->cap->edit_terms)) : ?>
+            <?php if (current_user_can($tax->cap->edit_terms)) : ?>
                 <div id="<?php echo $taxonomy; ?>-adder" class="wp-hidden-children">
                     <h4>
                         <a id="<?php echo $taxonomy; ?>-add-toggle" href="#<?php echo $taxonomy; ?>-add" class="hide-if-no-js">
-                    <?php
-                    /* translators: %s: add new taxonomy label */
-                    printf(__('+ %s'), $tax->labels->add_new_item);
-                    ?>
+                            <?php
+                            /* translators: %s: add new taxonomy label */
+                            printf(__('+ %s'), $tax->labels->add_new_item);
+                            ?>
                         </a>
                     </h4>
                     <p id="<?php echo $taxonomy; ?>-add" class="category-add wp-hidden-child">
                         <label class="screen-reader-text" for="new<?php echo $taxonomy; ?>"><?php echo $tax->labels->add_new_item; ?></label>
                         <input type="text" name="new<?php echo $taxonomy; ?>" id="new<?php echo $taxonomy; ?>" class="form-required form-input-tip" value="<?php echo esc_attr($tax->labels->new_item_name); ?>" aria-required="true"/>
                         <label class="screen-reader-text" for="new<?php echo $taxonomy; ?>_parent">
-            <?php echo $tax->labels->parent_item_colon; ?>
+                            <?php echo $tax->labels->parent_item_colon; ?>
                         </label>
-                            <?php wp_dropdown_categories(array('taxonomy' => $taxonomy, 'hide_empty' => 0, 'name' => 'new' . $taxonomy . '_parent', 'orderby' => 'name', 'hierarchical' => 1, 'show_option_none' => '&mdash; ' . $tax->labels->parent_item . ' &mdash;')); ?>
+                        <?php wp_dropdown_categories(array('taxonomy' => $taxonomy, 'hide_empty' => 0, 'name' => 'new' . $taxonomy . '_parent', 'orderby' => 'name', 'hierarchical' => 1, 'show_option_none' => '&mdash; ' . $tax->labels->parent_item . ' &mdash;')); ?>
                         <input type="button" id="<?php echo $taxonomy; ?>-add-submit" data-wp-lists="add:<?php echo $taxonomy ?>checklist:<?php echo $taxonomy ?>-add" class="button category-add-submit" value="<?php echo esc_attr($tax->labels->add_new_item); ?>" />
-                            <?php wp_nonce_field('add-' . $taxonomy, '_ajax_nonce-add-' . $taxonomy, false); ?>
+                        <?php wp_nonce_field('add-' . $taxonomy, '_ajax_nonce-add-' . $taxonomy, false); ?>
                         <span id="<?php echo $taxonomy; ?>-ajax-response"></span>
                     </p>
                 </div>
-        <?php endif; ?>
+            <?php endif; ?>
         </div>
-        <?php
+    <?php
     }
 
     public function addJsSettingsPage() { ?>
