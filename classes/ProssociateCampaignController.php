@@ -24,8 +24,13 @@ class ProssociateCampaignController {
         if(isset($_GET['page'])) {
             if($_GET['page'] == 'prossociate_addedit_campaign')
                 add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+            if(($_GET['page'] === 'prossociate_manage_campaigns' && (isset($_GET['action']) && $_GET['action'] === 'delete')) || isset( $_POST['mass_ids'] ))
+                add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts_delete'));
         }
         add_action('wp_ajax_prossociate_search', array($this, 'ajax_print_serps'));
+
+        // For deleting campaigns
+        add_action('wp_ajax_prosociate_campaignDelete', array($this, 'ajaxDeleteCampaigns'));
         
         $search = new ProssociateSearch('','');
         
@@ -159,10 +164,15 @@ class ProssociateCampaignController {
             $browsenode = $_POST['browsenode'];
          * 
          */
-        $browsenode = $_POST['browsenode'];
+        $browsenode = isset($_POST['browsenode']) ? $_POST['browsenode'] : null;
+        $keyword = isset($_POST['keyword']) ? $_POST['keyword'] : '';
+        $searchIndex = isset($_POST['searchindex']) ? $_POST['searchindex'] : '';
+        $sortBy = isset($_POST['sortby']) ? $_POST['sortby'] : '';
+        $category = isset($_POST['category']) ? $_POST['category'] : '';
+        $page = isset($_POST['page']) ? $_POST['page'] : '';
 
         // yuri - add sortby, browsenode parameter
-        $search = new ProssociateSearch($_POST['keyword'], $_POST['searchindex'], $browsenode, $_POST['sortby'], $_POST['page'], $_POST['category']);
+        $search = new ProssociateSearch($keyword, $searchIndex, $browsenode, $sortBy, $page, $category);
 
         $search->execute('Small,OfferSummary,Images,Variations,VariationOffers,Offers,OfferFull', false);
         // yuri - set advanced search options
@@ -189,30 +199,33 @@ class ProssociateCampaignController {
         } else {
             $action = '';
         }
-        
+
         // Check if mass delete was confirmed
         if( isset( $_POST['mass_ids'] ) )
         {
+            include PROSSOCIATE_ROOT_DIR."/views/campaign/deleting.php";
+            die();
+            /*
             $deleteAssociated = FALSE;
             // Check if associated posts will also be deleted
             if( isset( $_POST['is_delete_posts'] ) && ( $_POST['is_delete_posts'] == "on" ) )
             {
                 $deleteAssociated = TRUE;
             }
-            
+
             // Delete the campaigns
             $deleteCheck = $this->delete_campaigns( explode( '-', $_POST['mass_ids'] ), $deleteAssociated );
-            
+
             // Remove the pagination arg
             $currUrl = remove_query_arg( 'pagi' );
-            
+
             // Add the dm-mass-delete get param
             $redirectMassDel = add_query_arg( array( 'dm-mass-delete' => $deleteCheck ), $currUrl );
-            
+
             // Redirect
             wp_redirect( $redirectMassDel );
             exit;
-            
+            */
         }
         
         // Confirm delete associated posts on mass campaign delete
@@ -221,32 +234,22 @@ class ProssociateCampaignController {
             $dmMassDelete = true;
             include PROSSOCIATE_ROOT_DIR."/views/campaign/delete.php";
         }
-        
-        // When deleting a campaign
-        if( $action == 'delete' ) 
+
+        // When deleting a campaign individually
+        if( $action == 'delete' )
         {
-            $campaign = new ProssociateCampaign();
-            if( $_REQUEST['is_confirmed'] )
+            //$campaign = new ProssociateCampaign();
+            if( isset($_REQUEST['is_confirmed']) )
             {
-                // Check if we will also delete all the posts associated with the campaign
-                if( $_REQUEST['is_delete_posts'] == 'on' ) 
-                {
-                    // Delete the associated posts
-                $campaign->delete_associated_posts($_REQUEST['campaign_id']);
-                }
-                
-                // Delete the campaign
-                // TODO i think it's better to check if the campaign is an integer for better security
-                $campaign->dbdelete($_REQUEST['campaign_id']);
-                
-                $msg = 'Campaign deleted successfully.';
-                
                 // Unset the action
                 $action = null;
-            } 
-            else 
+
+                include PROSSOCIATE_ROOT_DIR."/views/campaign/deleting.php";
+                die();
+            }
+            else
             {
-            	include PROSSOCIATE_ROOT_DIR."/views/campaign/delete.php";
+                include PROSSOCIATE_ROOT_DIR."/views/campaign/delete.php";
             }
         }
         
@@ -492,6 +495,179 @@ class ProssociateCampaignController {
             <p><?php _e( 'A problem occurred while deleting campaigns', 'my-text-domain' ); ?></p>
         </div>
     <?php }
+
+    /**
+     * For deleting campaigns
+     */
+    public function ajaxDeleteCampaigns() {
+        $campId = (int)$_POST['campId'];
+        $deleteAssoc = $_POST['deletePosts']; // note: this should be treated as string for consistency
+        $massIds = $_POST['massIds'];
+
+        // Response holder
+        $response = array();
+
+        // Create instance of campaign
+        $campaign = new ProssociateCampaign();
+
+        // Guilty until proven
+        $complete = 'false';
+
+        // Check if we will delete associated posts
+        if($deleteAssoc == 'true') {
+            // Check if we are on mass delete
+            if($massIds !== '0' && $campId == 0) {
+                // Convert to array
+                $massIdsArr = explode('-', $massIds);
+                // Check if not empty
+                if(!empty($massIdsArr) && $massIdsArr[0] != '') {
+                    // Delete the associated posts of the campaign
+                    $allDeleted = $this->deleteCampaign((int)$massIdsArr[0], $campaign);
+                    // If all was deleted, delete the campaign too
+                    if($allDeleted) {
+                        $response['message'] = 'Campaign ' . $massIdsArr[0] . ' was deleted.';
+                        // Delete the campaign
+                        $campaign->dbdelete((int)$massIdsArr[0]);
+                        // Delete the first element
+                        unset($massIdsArr[0]);
+                        // Recreate the mass ids
+                        $massIdsString = implode('-', $massIdsArr);
+                        $massIds = $massIdsString;
+                    } else {
+                        $response['message'] = "Deleted 20 Products from Campaign " . $massIdsArr[0];
+                    }
+                } else {
+                    $complete = 'true';
+                    $response['message'] = 'All Selected Campaigns are deleted';
+                }
+            } else {
+                // We are on single delete
+                // Delete associated posts
+                $allDeleted = $this->deleteCampaign($campId, $campaign);
+
+                // Check if everything was deleted
+                if($allDeleted) {
+                    // Complete
+                    $complete = 'true';
+                    // Delete the campaign
+                    $campaign->dbdelete($campId);
+                    $response['message'] = 'Campaign deleted successfully.';
+                } else {
+                    $response['message'] = '20 Products was deleted. Continuing..';
+                }
+            }
+
+        } else {
+            // Complete
+            $complete = 'true';
+
+            // Check if we are on mass delete
+            if($massIds !== '0' && $campId == 0) {
+                // Convert to array
+                $massIdsArr = explode('-', $massIds);
+
+                // Delete all campaign
+                foreach($massIdsArr as $k) {
+                    // Delete the campaign
+                    $campaign->dbdelete((int)$k);
+                }
+
+                $response['message'] = 'Campaigns deleted successfully.';
+            } else {
+                $response['message'] = 'Campaign deleted successfully.';
+
+                // Delete the campaign
+                $campaign->dbdelete($campId);
+            }
+        }
+
+        // Include complete
+        $response['complete'] = $complete;
+        $response['action'] = 'prosociate_campaignDelete';
+        $response['campId'] = $campId;
+        $response['massIds'] = $massIds;
+        $response['deletePosts'] = $deleteAssoc;
+
+        echo json_encode($response);
+
+        die();
+    }
+
+    /**
+     * @param int $campId
+     * @param object $campaign
+     * @return bool
+     */
+    private function deleteCampaign($campId, $campaign) {
+        // TODO change limit
+        $limitDelete = 20;
+
+        $allDeleted = true;
+
+        // Get associated posts
+        $assocPosts = $campaign->getAssociatedPosts($campId);
+
+        // Unserialized the results
+        $assocPostsUnser = unserialize($assocPosts->associated_posts);
+
+        $ctr = 0;
+
+        if(!empty($assocPostsUnser)) {
+            // Go on through each of the assoc posts
+            foreach($assocPostsUnser as $k => $v) {
+                // Check if we have a post
+                if(get_post($k) === null)
+                    continue;
+
+                // Limit the delete to 20 per loop
+                if($ctr >= $limitDelete) {
+                    $allDeleted = false;
+                    break;
+                }
+
+                // Delete the main product
+                // Delete the images
+                $this->deleteImages($k);
+                // Delete the product
+                $this->deleteProduct($k);
+
+                $ctr++;
+
+                // If we are here then all products was deleted
+                $allDeleted = true;
+            }
+        }
+
+        return $allDeleted;
+    }
+
+    /**
+     * Delete associated images for a product
+     * @param int $productId
+     */
+    private function deleteImages($productId) {
+        // Get main images
+        $args = array(
+            'post_parent' => (int)$productId,
+            'post_type' => 'attachment',
+            'post_status' => 'any'
+        );
+        $images = get_children($args);
+
+        // Delete images
+        foreach($images as $image) {
+            wp_delete_attachment($image->ID, true);
+        }
+    }
+
+    /**
+     * Delete a product
+     * @param int $productId
+     */
+    private function deleteProduct($productId) {
+        // Delete
+        wp_delete_post($productId, true);
+    }
     
     /**
      * The scripts to be loaded on all campaign-related pages on the admin panel
@@ -525,6 +701,13 @@ class ProssociateCampaignController {
         
         wp_register_style('pros_admin_style', PROSSOCIATE_ROOT_URL.'/css/admin_style.css');
         wp_enqueue_style('pros_admin_style');
+    }
+
+    /**
+     * Enqueue JS for Delete page
+     */
+    public function admin_enqueue_scripts_delete() {
+        wp_enqueue_script('pros_delete_js', PROSSOCIATE_ROOT_URL . '/js/ProsociateCampaignDelete.js', array('jquery'), '1.0.0');
     }
 
 }

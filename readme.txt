@@ -2,8 +2,8 @@
 Contributors: soflyy
 Tags: amazon,affiliate,associate,woocommerce
 Requires at least: 3.7
-Tested up to: 3.8
-Stable tag: 0.9.4
+Tested up to: 3.8.1
+Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,13 @@ Otherwise, they're nearly identical!
 3. Install WooCommerce, and then visit the Prosociate -> Settings page to get started.
 
 == Changelog ==
+
+= 1.0 =
+* Added a real cron feature for automatic product updates every 24 hours.
+* Fix missing review issues.
+* Allow overriding of product title, description and except.
+* Fix the delete campaign process to make sure that all images associated on the products will also be deleted.
+* Gives more flexibility on formatting the "Last update %%DATE%%". It will now accept "%%M%%/%%D%%/%%Y%%".
 
 = 0.9.2 =
 * Updated category tree/browsenodes functionality.

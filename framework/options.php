@@ -121,7 +121,16 @@ class SoflyyField {
 			</select>
 			<?php
 
-		}
+		} elseif($this->type == 'cronText') {
+            $cronOption = esc_attr( get_option( $this->slug ) );
+            if(empty($cronOption) || $cronOption == false) {
+                $cronValue = substr(sha1(rand()), 0, 5);
+            } else {
+                $cronValue = $cronOption;
+            }
+            ?>
+            <?php echo get_bloginfo('wpurl'); ?>/?proscron=<input name="<?php echo $this->slug; ?>" type="text" id="<?php echo $this->slug; ?>" value="<?php echo $cronValue; ?>" style="width: 5em;" />
+        <?php }
 
 		if ($this->description) { ?>
 			<p class="description"><?php echo $this->description; ?></p>

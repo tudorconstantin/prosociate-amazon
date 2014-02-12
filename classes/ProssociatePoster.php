@@ -448,6 +448,7 @@ class ProssociatePoster {
 
                     $complete = false;
 
+                    $tempComplete = false;
                     if($testCounter == $total_products_from_js) {
                         $tempComplete = true;
                     }
@@ -593,6 +594,14 @@ class ProssociatePoster {
 	}
 
     function post($item, $post_id = null, $fromUpdate = false) {
+        $dmCheckifUpdate = false;
+        // If updating products remove the prices meta fields to remove conflict
+        if($post_id != null) {
+            $dmCheckifUpdate = true;
+            delete_post_meta($post_id, '_regular_price');
+            delete_post_meta($post_id, '_sale_price');
+            delete_post_meta($post_id, '_price');
+        }
         // Get the data
         $data = $item->data;
 
@@ -633,22 +642,31 @@ class ProssociatePoster {
 
         if ($post_id) {
             $update_operation = true;
+            // If on update use the previously defined title. This is to avoid overridding of user-defined title
+            $finalTitle = get_the_title($post_id);
+
+            // Get existing excerpt
+            $dmPost = get_post($post_id);
+            $finalExcerpt = $dmPost->post_excerpt;
         } else {
             $update_operation = false;
+
+            // If not on update generate a custom title
+            // Limit title length
+            $titleLength = get_option('prossociate_settings-title-word-length', 9999);
+            if(!is_numeric($titleLength))
+                $titleLength = 9999;
+
+            $trimmedTitle = wordwrap($item->Title, $titleLength, "dmpros123", false);
+            $explodedTitle = explode("dmpros123", $trimmedTitle);
+            $finalTitle = $explodedTitle[0];
+
+            $finalExcerpt = '';
         }
 
         $post_options = $this->campaign->post_options;
         $search_parameters = $this->campaign->search_parameters;
         $campaign_settings = $this->campaign->campaign_settings;
-		
-		// Limit title length
-		$titleLength = get_option('prossociate_settings-title-word-length', 9999);
-        if(!is_numeric($titleLength))
-            $titleLength = 9999;
-
-		$trimmedTitle = wordwrap($item->Title, $titleLength, "dmpros123", false);
-		$explodedTitle = explode("dmpros123", $trimmedTitle);
-		$finalTitle = $explodedTitle[0];
         
         // ----------------------------------
         // SET UP THE POST ARRAY
@@ -657,7 +675,8 @@ class ProssociatePoster {
             'post_content' => '[prosociate]',
             'post_status' => 'publish',
             'post_title' => $finalTitle,
-            'post_type' => $post_options['post_type'], 
+            'post_type' => $post_options['post_type'],
+            'post_excerpt' => $finalExcerpt
         );
         
          if(isset($post_options['comment_status'])) {
@@ -795,6 +814,9 @@ class ProssociatePoster {
         // Check if we have valid post id
         if(is_int($post_id))
             $this->wordpressSeobyYoastIntegration($post_id, $finalTitle);
+
+        // Insert ASIN as SKU
+        update_post_meta($post_id, '_sku', $data->ASIN);
         
         // return the post ID
         return $post_id;

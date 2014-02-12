@@ -23,7 +23,10 @@ if ($CustomerReviews->HasReviews) {
 
 	?>
 
-		<iframe src='<?php echo $CustomerReviews->IFrameURL; ?>' style='margin-top: 24px;' width='<?php echo $iframe_width; ?>' height='<?php echo $iframe_height; ?>'></iframe>
+        <?php // hardhack - replace the expiration 2014 to 2020 //
+        $iframeUrl = str_replace('exp=2014-', 'exp=2020-', $CustomerReviews->IFrameURL);
+        ?>
+        <iframe src='<?php echo $iframeUrl; ?>' style='margin-top: 24px;' width='<?php echo $iframe_width; ?>' height='<?php echo $iframe_height; ?>'></iframe>
 	</div>
 
 	<script>

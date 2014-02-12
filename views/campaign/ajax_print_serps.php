@@ -161,7 +161,7 @@ function reformat_price_de($price) {
 <div class="dm-pros-search-wrap">
 <?php 
 // Only display results if they exists
-if( !is_null( $search->results_pure ) )
+if( isset($search->results_pure ) && !is_null( $search->results_pure ) )
 {
 ?>
 <div class="dm-pros-result-pagination">
@@ -293,7 +293,7 @@ if( !is_null( $search->results_pure ) )
         if(empty($dmPrice)) {
 			if(isset($result->VariationSummary->LowestSalePrice->FormattedPrice)) {
 				$dmPrice = $result->VariationSummary->LowestSalePrice->FormattedPrice;
-			} elseif($result->VariationSummary->HighestSalePrice->FormattedPrice) {
+			} elseif(isset($result->VariationSummary->HighestSalePrice->FormattedPrice)) {
 				$dmPrice = $result->VariationSummary->HighestSalePrice->FormattedPrice;
 			} elseif(isset($result->VariationSummary->LowestPrice->FormattedPrice)) {
 				$dmPrice = $result->VariationSummary->LowestPrice->FormattedPrice;

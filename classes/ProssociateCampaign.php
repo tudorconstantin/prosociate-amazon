@@ -243,6 +243,22 @@ class ProssociateCampaign {
         unset( $this->associated_posts[$id] );
     }
 
+    /**
+     * Get Associated posts of a campaign
+     * @param int $campaignId
+     */
+    public function getAssociatedPosts($campaignId) {
+        global $wpdb;
+
+        // Select the campaign with the id = $this->id = $id
+        $query = "SELECT associated_posts FROM " . $wpdb->prefix . PROSSOCIATE_PREFIX . "campaigns
+            WHERE `id` = '%d'";
+
+        $result = $wpdb->get_row( $wpdb->prepare( $query, $campaignId ) );
+
+        return $result;
+    }
+
 
 }
 // create a campaign with parameters like search query, post type, post date range, etc. then feed the campaign to prossociate poster

@@ -2,7 +2,7 @@
 /*
   Plugin Name: Prosociate Free Edition
   Description: The best free WordPress plugin for Amazon Associates.
-  Version: 0.9.4
+  Version: 1.0
   Author: Soflyy
   Plugin URI: http://www.prosociate.com/
  */
@@ -58,7 +58,8 @@ include "classes/ProssociateItem.php";
 include "classes/ProssociatePoster.php";
 include "classes/ProssociateDisplay.php";
 include "classes/ProssociateCheckoutHooker.php";
-include "classes/ProssociateCron.php";
+include "cron/ProsociateCron.php";
+//include "classes/ProssociateCron.php";
 
 // utility
 if (!function_exists('pre_print_r')) {
@@ -132,7 +133,7 @@ class Prossociate {
         $this->Display = new ProssociateDisplay; // we only need to create the Display on the frontend. And we need to do it right on startup, because the Display registers the shortcodes
         $this->Poster = new ProssociatePoster; // we only need to create the Poster in the admin panel. And we only need to do it so it can handle AJAX iterative post requests.
         $this->CheckoutHooker = new ProssociateCheckoutHooker; // we only need to create the checkout hooker on the frontend
-        $this->Cron = new ProssociateCron(); // we only need to create the cron on the frontend
+        //$this->Cron = new ProssociateCron(); // we only need to create the cron on the frontend
 
         add_action('admin_init', array($this, 'addSettings'));
 
@@ -362,16 +363,24 @@ class Prossociate {
         $dateDisplay = get_option('prossociate_settings-pros-date-format', 'true');
         // Set default
         if($dateDisplay == false || empty($dateDisplay))
-            $dateDisplay = '(as of %%DATE%% at %%TIME%%)';
+            $dateDisplay = '(as of %%M%%/%%D%%/%%Y%% at %%TIME%%)';
 
         // Get date
         $date = date('m/d/Y', $lastUpdateTime);
+        // Convert to array
+        $arrDate = explode('/', $date);
+        // Get parts
+        $month = $arrDate[0];
+        $day = $arrDate[1];
+        $year = $arrDate[2];
         // Get time
         $time = date('H:i', $lastUpdateTime) . ' ' . date_default_timezone_get();
-        // Convert the %%DATE%%
-        $str = str_replace('%%DATE%%', $date, $dateDisplay);
-        // Convert the %%TIME%%
-        $str2 = str_replace('%%TIME%%', $time, $str);
+        // Convert the $dateDisplay
+        $str2 = str_replace(
+            array('%%DATE%%', '%%TIME%%', '%%M%%', '%%D%%', '%%Y%%'),
+            array($date, $time, $month, $day, $year),
+            $dateDisplay
+        );
 
         //$lastUpdate = date('m/d/Y H:i', $lastUpdateTime) . ' ' . date_default_timezone_get();
 
@@ -389,7 +398,10 @@ class Prossociate {
     }
 
     public function reviewTabs($tabs) {
-        $tabs['reviews']['title'] = "Reviews";
+        if(isset($tabs['reviews'])) {
+            $tabs['reviews']['title'] = "Reviews";
+        }
+
         return $tabs;
     }
 
@@ -401,10 +413,6 @@ class Prossociate {
             self::$instance = new self();
         }
         return self::$instance;
-    }
-
-    public function initCron() {
-        new ProssociateCron();
     }
 
     public function check_amazon_notice() {
@@ -556,6 +564,7 @@ class Prossociate {
             add_option('prossociate_settings-iframe-height', 600);
             add_option('prossociate_settings-iframe-position', 'comment_form');
             add_option('prossociate_settings-title-word-length', 9999);
+            add_option('prossociate_settings-dm-cron-api-key', '');
             ?>
             <div class="updated">
                 <p>Thanks for installing Prosociate.</p>
@@ -617,7 +626,12 @@ class Prossociate {
         $settings->add_field('Customer Reviews IFrame Width', 'iframe-width');
         $settings->add_field('Customer Reviews IFrame Height', 'iframe-height');
         $settings->add_field('Max Length for Product Titles', 'title-word-length', 'text', 'Limit the number of characters in product titles. Does not apply retroactively.');
-//        $settings->add_field('Customer Reviews Position', 'iframe-position', 'select', 'Customer Reviews IFrame Position', array('comment_form' => 'Standard', 'comment_form_before' => 'Before The Comment Form', 'comment_form_after' => 'After The Comment Form'));
+        $settings->add_field('Cron API Key', 'dm-cron-api-key', 'cronText', 'Optional: Create a cron job in your web hosting control panel to run this URL. It is recommended to be run every 2 minutes. It will automatically update product data that is more than 24 hours old');
+        $settings->add_field('Product Availability', 'dm-pros-prod-avail', 'select', 'When a product is no longer "available" on Amazon.', array(
+                'remove' => 'Remove unavailable product',
+                'change' => 'Change product stock status to "out of stock" for unavailable products.'
+            )
+        );
         //TODO should delete this?
         /*
           Canada
@@ -664,7 +678,7 @@ class Prossociate {
 
         // Set defaults
         if($dateDisplay == false || empty($dateDisplay))
-            $dateDisplay = '(as of %%DATE%% at %%TIME%%)';
+            $dateDisplay = '(as of %%M%%/%%D%%/%%Y%% at %%TIME%%)';
         ?>
         <div id="tabs-compliance-settings" style="display: none;">
             <h3>Compliance</h3>
@@ -680,7 +694,7 @@ class Prossociate {
                        style="width: 300px;" value="<?php echo $dateDisplay; ?>"/>
                 <script type="text/javascript">
                     function dmRestoreDefault() {
-                        document.getElementById('prossociate_settings-pros-date-format').value = '(as of %%DATE%% at %%TIME%%)';
+                        document.getElementById('prossociate_settings-pros-date-format').value = '(as of %%M%%/%%D%%/%%Y%% at %%TIME%%)';
                     }
                     document.getElementById('dm-pros-default-link').addEventListener("click", dmRestoreDefault, false);
                 </script>
@@ -786,7 +800,7 @@ class Prossociate {
 
         // Check for the date format settings
         if(!get_option('prossociate_settings-pros-date-format')) {
-            update_option('prossociate_settings-pros-date-format', '(as of %%DATE%% at %%TIME%%)');
+            update_option('prossociate_settings-pros-date-format', '(as of %%M%%/%%D%%/%%Y%% at %%TIME%%)');
         }
 
         // create/update required database tables
@@ -810,7 +824,7 @@ class Prossociate {
      * @param object $post
      */
     public function product_categories_meta_box($post, $box) {
-        $campaign_id = $_REQUEST['campaign_id'];
+        $campaign_id = isset($_REQUEST['campaign_id']) ? $_REQUEST['campaign_id'] : null;
         if( $campaign_id != null ) {
             global $wpdb;
 
@@ -833,6 +847,8 @@ class Prossociate {
             $args = $box['args'];
         extract(wp_parse_args($args, $defaults), EXTR_SKIP);
         $tax = get_taxonomy($taxonomy);
+
+        $dmPostId = isset($post->ID) ? $post->ID : 0;
         ?>
         <div id="taxonomy-<?php echo $taxonomy; ?>" class="categorydiv">
             <ul id="<?php echo $taxonomy; ?>-tabs" class="category-tabs">
@@ -852,7 +868,7 @@ class Prossociate {
                 echo "<input type='hidden' name='{$name}[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
                 ?>
                 <ul id="<?php echo $taxonomy; ?>checklist" data-wp-lists="list:<?php echo $taxonomy ?>" class="categorychecklist form-no-clear">
-                    <?php wp_terms_checklist($post->ID, array('taxonomy' => $taxonomy, 'popular_cats' => $popular_ids)) ?>
+                    <?php wp_terms_checklist($dmPostId, array('taxonomy' => $taxonomy, 'popular_cats' => $popular_ids)) ?>
                 </ul>
                 <?php if($campaign_id != null){ ?>
                     <script type=''>

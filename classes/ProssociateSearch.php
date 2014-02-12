@@ -120,7 +120,7 @@ class ProssociateSearch {
         $amazonEcs->category($this->searchindex);
         $amazonEcs->responseGroup($responsegroup);
 
-        //$amazonEcs->merchantid('Amazon');
+        $amazonEcs->merchantid('Amazon');
 
 
             if (!empty($this->keywords)) {
@@ -129,11 +129,12 @@ class ProssociateSearch {
                 $response = $amazonEcs->search('*', $this->browsenode);
             }
 
-
-        if ($response != '') {
-            if ($response->Items->Request->IsValid != 'True') {
-                print_r($response);
-                throw new Exception('Invalid Request');
+        if($this->searchindex !== '') { // To prevent unnecessary exception
+            if ($response != '') {
+                if ($response->Items->Request->IsValid != 'True') {
+                    print_r($response);
+                    throw new Exception('Invalid Request');
+                }
             }
         }
         
@@ -141,62 +142,66 @@ class ProssociateSearch {
 
         // yuri - null exception
         $results = array();
-        
-        if (count($response->Items->Item) == 1) {
 
-            $item = $response->Items->Item;
+        if(isset($response->Items->Item)) {
+            if (count($response->Items->Item) == 1) {
 
-            $ASIN = $item->ASIN;
-            $DetailPageURL = $item->DetailPageURL;
-            $Title = $item->ItemAttributes->Title;
+                $item = $response->Items->Item;
 
-            $results[] = array("ASIN" => $ASIN, "Title" => $Title);
-            $items[] = $item;
-        } else {
+                $ASIN = $item->ASIN;
+                $DetailPageURL = $item->DetailPageURL;
+                $Title = $item->ItemAttributes->Title;
 
-            if (isset($response->Items->Item)) {
+                $results[] = array("ASIN" => $ASIN, "Title" => $Title);
+                $items[] = $item;
+            } else {
 
-                foreach ($response->Items->Item as $item) {
+                if (isset($response->Items->Item)) {
 
-                    // For DVD
-                    // Check if there are multiple offers
-                    if(is_array($item->Offers->Offer)) {
-                        
-                    } else {
-                        // Check if Merchant exist
-                        if(isset($item->Offers->Offer->Merchant)) {
-                            // Check if string
-                            if(is_string($item->Offers->Offer->Merchant->Name)) {
-                                // Now check if Name of Merchant is "Amazon Video On Demand"
-                                // I've noticed that all dvd products that can't be added on cart has Merchant name of Amazon Video On Demand
-                                // So we should not show those products to prevent users to add them
-                                //if($item->Offers->Offer->Merchant->Name === 'Amazon Video On Demand')
-                                //    continue;
-                            }
-                        } // End if Merchant
-                    } // End if array
-                    
-                    $ASIN = $item->ASIN;
-                    $DetailPageURL = $item->DetailPageURL;
-                    $Title = $item->ItemAttributes->Title;
+                    foreach ($response->Items->Item as $item) {
+                        /*
+                        // For DVD
+                        // Check if there are multiple offers
+                        if(is_array($item->Offers->Offer)) {
+
+                        } else {
+                            // Check if Merchant exist
+                            if(isset($item->Offers->Offer->Merchant)) {
+                                // Check if string
+                                if(is_string($item->Offers->Offer->Merchant->Name)) {
+                                    // Now check if Name of Merchant is "Amazon Video On Demand"
+                                    // I've noticed that all dvd products that can't be added on cart has Merchant name of Amazon Video On Demand
+                                    // So we should not show those products to prevent users to add them
+                                    //if($item->Offers->Offer->Merchant->Name === 'Amazon Video On Demand')
+                                    //    continue;
+                                }
+                            } // End if Merchant
+                        } // End if array
+                        */
+
+                        $ASIN = $item->ASIN;
+                        $DetailPageURL = $item->DetailPageURL;
+                        $Title = $item->ItemAttributes->Title;
 
 
-                    $results[] = array("ASIN" => $ASIN, "Title" => $Title);
-                    $items[] = $item;
+                        $results[] = array("ASIN" => $ASIN, "Title" => $Title);
+                        $items[] = $item;
+                    }
                 }
             }
+            $this->results = $results;
+            $this->results_pure = $items;
         }
 
-        $this->results = $results;
-        $this->results_pure = $items;
+
 
         // Total pages and results logic for asin look up
         if($isAsinLookUp) {
             $this->totalpages = 1; // Because we have 10 asin lookup limit
             $this->totalresults = count($this->results_pure); // Because no total results are given
         } else {
-            $this->totalpages = $response->Items->TotalPages;
-            $this->totalresults = $response->Items->TotalResults;
+            $this->totalpages = isset($response->Items->TotalPages) ? $response->Items->TotalPages : 0;
+            $this->totalresults = isset($response->Items->TotalResults) ? $response->Items->TotalResults: 0;
         }
 
         // TODO

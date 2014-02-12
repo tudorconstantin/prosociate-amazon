@@ -1,6 +1,6 @@
 <?php 
 // Check if mass delete
-if( $dmMassDelete )
+if( isset($dmMassDelete) && $dmMassDelete === true )
 {
     $delHeader = 'Delete Campaigns';
     $delMessage = 'Are you sure you want to delete these campaigns?';
